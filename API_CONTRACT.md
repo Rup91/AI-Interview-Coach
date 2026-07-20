@@ -381,31 +381,31 @@ Finalizes the interview and returns the overall evaluation summary.
 
 ```
     configure Interview
-           &darr;
+           ↓
     
     Generate Interview Session
-            &darr;
+            ↓
     
     Start Interview
-            &darr;
+            ↓
     
     Receive First Question
-            &darr;
+            ↓
     
     Submit Answer (text/Voice)
-            &darr;
+            ↓
     
     AI Evaluation
-            &darr;
+            ↓
     
     Receive Next Question
-            &darr;
+            ↓
     
     Repeat Untill Completion
-            &darr;
+            ↓
     
     Complete Interview
-            &darr;
+            ↓
 
     Generate Final Report
             
