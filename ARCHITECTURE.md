@@ -24,17 +24,17 @@ Similarly, technical screening interviews require significant interviewer effort
 
 This project aims to address these challenges by building an AI-assisted interview platform that focuses on three key objecttives. 
 
-i. ** Interview Preparation** 
+### i. Interview Preparation
     
-    Help candidates practice role-specific technical interviews independently through AI-guided conversations and personalized feedback
+    - Help candidates practice role-specific technical interviews independently through AI-guided conversations and personalized feedback
 
-ii. ** AI-assisted Technical Screening**
+### ii. AI-assisted Technical Screening
 
-    Support interviewers by conducting structured first-round technical assessments and generating evaluation reports for human review.
+    - Support interviewers by conducting structured first-round technical assessments and generating evaluation reports for human review.
 
-iii. ** Knowledge Enablement**
+### iii. Knowledge Enablement
 
-    Capture interview knowledge, best practicesm and role-specific learning path into a reusable and scalable platform, reducing dependency on individual experts and improving knowledge sharing across teams.
+    - Capture interview knowledge, best practicesm and role-specific learning path into a reusable and scalable platform, reducing dependency on individual experts and improving knowledge sharing across teams.
 
 
 ## 3. Goals
@@ -93,3 +93,95 @@ provide-agnostic, allowing individual components to evolve independently.
 | Knowledge Layer | File-based Repository(JSON/Markdown) | Stoores prompts and interview questions for the MVP |
 | Knowledge Graph (Future) | Neo4j | Represents relationships between roles, skills, and interview topics |
 
+
+## 7. Component Responsibilities
+
+### i. Presentation Layer
+
+#### Component: 
+
+    - Streamlit Web Application
+
+#### Responsibilities:
+    
+    - Provides the user interface for interview sessions.
+    - Allows users to select interview roles
+    - Accepts text and voice inputs.
+    - Displays interview questions, scores, and feedback.
+    - Communications with the backend through REST APIs.
+
+
+### ii. API Layer
+
+#### Component: 
+
+    - FastAPI Backend
+
+#### Responsibilities:
+
+    - Exposes RESTful APIs.
+    - Receives and validates client requests.
+    - Routes requests to the Business Layer.
+    - Returns responses to the frontend.
+
+### iii. Business Layer
+
+#### Component: 
+
+    - Interview Service
+    - Voice Service
+    - Evaluation Service
+    - Session Service
+
+#### Responsibilities:
+
+    - Controls the interview workflow.
+    - Manages interview sessions.
+    - Processess voice interactions.
+    - Evaluates candidate responses.
+    - Generates interview feedback.
+    - Sends AI requests through the AI Gateway. 
+
+
+### iv. AI Gateway
+
+#### Component: 
+
+    - Model Router
+    - Provider Adapter
+
+#### Responsibilities:
+
+    - Selects the appropriate AI provider.
+    - Abstracts provider-specific implementations.
+    - Standardizes request and response formats.
+    - Enables support for multiple LLM Providers.
+
+
+### v. AI Providers
+
+#### Component:
+
+    - Google Gemini
+    - OpenAI
+    - Ollama
+
+#### Responsibilities:
+
+    - Generates interview questions.
+    - Evaluates canddiate responses.
+    - Produces AI-generated feedback.
+
+
+### vi. Knowledge Layer
+
+#### Component:
+
+    - Prompt Repository
+    - Interview Question Repository
+
+#### Responsibilities:
+
+    - Stores reusable prompts.
+    - Stores role-specific interview questions.
+    - Supports future knowledge Graph integration.
