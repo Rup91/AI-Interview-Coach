@@ -185,3 +185,152 @@ provide-agnostic, allowing individual components to evolve independently.
     - Stores reusable prompts.
     - Stores role-specific interview questions.
     - Supports future knowledge Graph integration.
+
+
+## 8. Interview Workflow
+
+The AI Interview Coach supports multiple interview scenarios, including interview prepartion, AI-assisted technical screening, and future enterprise recruitment workflows. 
+
+### Step 1: Interview Configuration
+
+The interview session can be initiated in one of the following ways:
+
+- Select a predefined interview role (e.g. AI Solution Architect, AI Consultant, Cloud Architect)
+- Upload a Job Description to generate a customized interview.
+- Receive a predefined interview configuration from an organization or recruiter. (** Future Enhancement ** )
+
+### Step 2: Interview Preparation
+
+The platform prepares the interview by:
+
+- Identifying the required skills and responsibilities.
+- Determining the interview objectives
+- Generating role-specific or JD-specific interview questions.
+
+### Step 3: Interaction Mode Selection
+
+The user selects the preferred interview mode:
+
+- Text
+- Voice 
+- Text + Voice
+
+### Step 4: Interview Initialization
+
+The frontend sends the interview request to the backend.
+
+The Business Layer creates a new interview session and requests the first interview questions through the AI Gateway.
+
+### Step 5: Interview Execution
+
+The AI provider generates the interview question,
+
+The question is presented to the candidate. 
+
+The candidate submits an answer using text or voice.
+
+If voice mode is selected, the Voice Service converts speech into text before evaluation.
+
+### Step 6: AI Evaluation
+
+The candidate's response is evaluated through the AI Gateway.
+
+The AI provider generates:
+
+- Candidate score
+- Strengths
+- Areas for improvements
+- Ideal answer of the questions
+- Next interview question
+
+### Step 7: Continuous Interview
+
+Step 5 and Step 6 are repeated until the interview is completed.
+
+### Step 8: Interview Summary
+
+At the end of the interview, the platform generates a comprehensive interview report containing:
+
+- Overall score
+- Performance summary
+- Strengths
+- Ares for improvement
+- Final recommendations
+
+
+## 9. API Design
+
+The AI Interview Coach exposes RESTful APIs to support interview initialization, candidate interaction, and interview completion.
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/interviews/configuration` | POST   | Creates a new interview configuration based on the selected role or uploaded Job Description (JD), preferred interaction mode (Text/Voice), and returns an interview session ID. |
+| `/interviews/{interviewId}/start` |  POST | Starts the interview session and returns the first interview question. |
+| `/interviews/{interviewId}` | GET | Retrieves the current interview session details and progress. |
+| `/interviews/{interviewId}/answer/text` | POST | Accepts a text response, evaluates the answer, and returns the score, feedback, and next interview question. |
+| `/interviews/{interviewId}/answer/voice` | POST | Accepts a voice response, converts speech to text, evaluates the answer, and returns the score, feedback, and next interview question. |
+| `/interviews/{interviewId}/complete` | POST | Completes the interview session and generates the final interview report. |
+
+## 10. AI Gateway Design
+
+The AI Gateway acts as the abstraction layer between the Business Layer and AI providers. Instead of directly integrating with a specific LLM, all AI requests pass through the AI Gateway. 
+
+The design provides flexibility, maintainability, and provider independence.
+
+### Components
+
+#### Model Router
+
+The Model Router determines which AI procider should handle a request based on the configured routing strategy. 
+
+#### Provider Adapter
+
+The Provider Adapter translates provider-specific request and response formats into a standarized internal format. 
+
+### Responsibilities
+
+- Decouple business logic from AI providers
+- Support multiple LLM providers.
+- Standardize request and response formats
+- Enable future model routing strategies.
+- Simplify provider replacement without affectinf the Business Layer.
+
+### Supported Providers
+
+- Google Gemini (Primary)
+- OpenAI
+- Ollama
+
+### Future Enhancements
+
+- Dynamic model routing
+- Cost-aware routing
+- Performance-based routing
+- Fallback provider support
+- AI usage monitoring
+
+## 11. Future Roadmap
+
+The current architecture is designed to support future enhancements while keeping the core components modular and extensible.
+
+### Phase 2
+
+- Recruiter Portal for interview configuration and candidate management.
+- Candidate authentication and authorization.
+- Persistent storage for interview sessions and evaluation history.
+- Configurable interview templates for different job roles.
+
+### Phase 3
+
+- Knowledge Grapg integration for domain-specific interview generation.
+- Retrieval-Augmented Generation (RAG) for contextual question generation.
+- AI Agent-based interview orchestration.
+- Dynamic model routing through the AI Gateway.
+
+### Phase 4
+
+- Multi-round interview workflows.
+- Adaptive interview generation based on candidate performance.
+- Analytics and reporting dashboard
+- Enterprise integration with ATS, HRMS, and Calendar systems.
+- AI governance, monitoring, and observability.
