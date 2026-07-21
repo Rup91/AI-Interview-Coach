@@ -88,10 +88,13 @@ A unique interview session is created and returned. The interview DOES NOT start
     "role": "AI Solution Architect",
     "jobDescription": "<optional JD text>",
     "interactionMode": "voice",
-    "experienceLevel" "Senior",
-    "totalQuestions": 10
+    "experienceLevel": "Senior"
 }
 ```
+
+> The number of interview questions is a backend-controlled business
+> decision (minimum 6, up to a maximum of 12, based on candidate
+> performance) and is intentionally not a client-supplied field.
 #### Response
 
 ```json

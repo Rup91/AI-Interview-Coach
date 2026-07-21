@@ -1,0 +1,36 @@
+{
+  "roles": {
+    "AI Solution Architect": {
+      "Junior": "Can you explain what a large language model is and describe a project where you used one?",
+      "Mid-Level": "Describe how you would design a basic RAG (Retrieval-Augmented Generation) pipeline for a customer support use case.",
+      "Senior": "Walk me through how you would architect an enterprise-grade AI solution that integrates multiple LLM providers with fallback support.",
+      "Lead": "How would you lead a team in designing an AI platform that balances cost, latency, and accuracy across multiple use cases?",
+      "Principal": "Describe your approach to setting the long-term AI architecture strategy for an organization adopting generative AI at scale.",
+      "Distinguished": "How would you evaluate and justify a multi-year investment in a proprietary versus open-source AI platform strategy for a large enterprise?"
+    },
+    "AI Consultant": {
+      "Junior": "What factors would you consider when recommending an AI tool to a small business client?",
+      "Mid-Level": "How would you assess whether a client's use case is a good fit for generative AI versus traditional automation?",
+      "Senior": "Describe how you would structure an AI readiness assessment for an enterprise client.",
+      "Lead": "How do you manage competing stakeholder expectations when advising on an AI transformation roadmap?",
+      "Principal": "How would you advise a client on building internal AI governance policies?",
+      "Distinguished": "Describe how you would shape an industry-wide AI adoption strategy while advising multiple enterprise clients."
+    },
+    "Cloud Architect": {
+      "Junior": "What is the difference between IaaS, PaaS, and SaaS, and when would you use each?",
+      "Mid-Level": "How would you design a highly available three-tier application on a public cloud provider?",
+      "Senior": "Describe how you would architect a multi-region disaster recovery strategy for a mission-critical application.",
+      "Lead": "How would you lead a cloud migration for a large enterprise with strict compliance requirements?",
+      "Principal": "Describe your approach to setting cloud architecture standards across multiple business units.",
+      "Distinguished": "How would you design a cloud strategy that balances multi-cloud flexibility with operational complexity at an enterprise scale?"
+    }
+  },
+  "default": {
+    "Junior": "Tell me about a recent technical project you worked on and the role you played in it.",
+    "Mid-Level": "Describe a challenging technical problem you solved recently and how you approached it.",
+    "Senior": "How do you approach making architectural decisions when the trade-offs aren't obvious?",
+    "Lead": "How do you balance hands-on technical work with leading and mentoring a team?",
+    "Principal": "How do you influence technical direction across teams that you don't directly manage?",
+    "Distinguished": "How do you drive technical strategy and standards across an entire organization?"
+  }
+}

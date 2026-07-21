@@ -117,9 +117,6 @@ Session lifecycle:
 Configured
 ↓
 
-Started
-↓
-
 In Progress
 ↓
 
