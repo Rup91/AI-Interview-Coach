@@ -174,7 +174,7 @@ GET /interviews/{interviewId}
 
 Returns the current interview status, progress, interaction mode, and interview configuration.
 
-#### Response
+#### Response (interview in progress)
 
 ```json
 {
@@ -183,14 +183,46 @@ Returns the current interview status, progress, interaction mode, and interview 
     "data": {
         "interviewID": "INT-10001",
         "status": "In Progress",
-        "interactionMode": "Voice",
-        "currentQuestion": 4,
-        "completedQuestions": 3,
-        "totalQuestions": 10,
-        "progressPercentage": 30
+        "interactionMode": "voice",
+        "currentQuestion": {
+            "questionNumber": 4,
+            "question": "Explain the role of embeddings in a RAG pipeline"
+        },
+        "questionsAnswered": 3,
+        "averageScore": 6.33
     }
 }
 ```
+
+#### Response (not yet started / completed)
+
+```json
+{
+    "success": true,
+    "message": "Interview session retrieved successfully",
+    "data": {
+        "interviewID": "INT-10001",
+        "status": "Configured",
+        "interactionMode": "voice",
+        "currentQuestion": null,
+        "questionsAnswered": 0,
+        "averageScore": null
+    }
+}
+```
+
+> The number of questions is a backend-controlled business decision (see
+> section 6(i)) - this response deliberately does not include a total
+> question count or a progress percentage, since interview length is
+> adaptive. `currentQuestion` is `null` when the interview has not yet
+> been started ("Configured") or has already finished ("Completed").
+> `averageScore` (0-10, matching each answer's individual `score`) is
+> `null` until at least one answer has been evaluated. This endpoint
+> does not return the final interview report (recommendation, summary,
+> aggregated strengths) - that is only produced when the interview
+> completes via Submit Answer, or by a future Complete Interview
+> endpoint.
+
 #### Possible Status Codes
 
 
@@ -224,12 +256,12 @@ Evaluates the candidate's text response using the AI Gateway and returns the eva
 }
 ```
 
-#### Response
+#### Response (interview continues)
 
 ```json
 {
     "success": true,
-    "message" "Answer evaluated successfully",
+    "message": "Answer evaluated successfully",
     "data": {
         "score": 8,
         "strengths": [
@@ -239,13 +271,53 @@ Evaluates the candidate's text response using the AI Gateway and returns the eva
             "include practical use cases"
         ],
         "feedback": "Your explanation is technically correct but could be more detailed.",
+        "idealAnswer": "A strong answer would explain the core concept, walk through the reasoning, and connect it to a concrete example.",
         "nextQuestion": {
             "questionNumber": 2,
             "question": "Explain the role of embeddings in a RAG pipeline"
+        },
+        "interviewResult": null
+    }
+}
+```
+
+#### Response (interview completes)
+
+```json
+{
+    "success": true,
+    "message": "Answer evaluated successfully",
+    "data": {
+        "score": 7,
+        "strengths": [
+            "Good conceptual understanding"
+        ],
+        "improvementAreas": [
+            "include practical use cases"
+        ],
+        "feedback": "Your explanation is technically correct but could be more detailed.",
+        "idealAnswer": "A strong answer would explain the core concept, walk through the reasoning, and connect it to a concrete example.",
+        "nextQuestion": null,
+        "interviewResult": {
+            "overallScore": 74,
+            "strengths": [
+                "Good conceptual understanding"
+            ],
+            "improvementAreas": [
+                "include practical use cases"
+            ],
+            "recommendation": "Recommended for further evaluation",
+            "summary": "The candidate completed 6 questions with an overall score of 74%. Recommendation: Recommended for further evaluation."
         }
     }
 }
 ```
+
+> The number of questions is a backend-controlled business decision (see
+> section 6(i)). Every response includes the evaluation of the answer
+> just submitted, plus exactly one of `nextQuestion` (interview
+> continues) or `interviewResult` (interview has just completed) - never
+> both, never neither.
 
 #### Possible Status Codes
 
@@ -253,7 +325,8 @@ Evaluates the candidate's text response using the AI Gateway and returns the eva
 |------| ------------|
 | 200 | Answer evaluated successfully |
 | 400 | Invalid request |
-| 409 | Interview session not found  |
+| 404 | Interview session not found |
+| 409 | Interview session exists but is not currently "In Progress" |
 | 500 | Internal server error |
 
 
@@ -280,12 +353,12 @@ Processes the uploaded audio, converts it to text, evaluates the response using 
 }
 ```
 
-#### Response
+#### Response (interview continues)
 
 ```json
 {
     "success": true,
-    "message" "Answer evaluated successfully",
+    "message": "Answer evaluated successfully",
     "data": {
         "transcription": "RAG combines retrieval with generation...",
         "score": 8,
@@ -296,21 +369,29 @@ Processes the uploaded audio, converts it to text, evaluates the response using 
             "Provide an implementation example"
         ],
         "feedback": "Well explained. Consider adding a real-world use case",
+        "idealAnswer": "A strong answer would explain the core concept, walk through the reasoning, and connect it to a concrete example.",
         "nextQuestion": {
             "questionNumber": 2,
             "question": "Explain the role of embeddings in a RAG pipeline"
-        }
+        },
+        "interviewResult": null
     }
 }
 ```
+
+> Same rules as Submit Text Answer: exactly one of `nextQuestion` /
+> `interviewResult` is present, never both, never neither. `audioFile` is
+> a reference string identifying previously-uploaded audio (e.g. a
+> filename) - this endpoint does not accept a raw file upload.
 
 #### Possible Status Codes
 
 | Code | Description |
 |------| ------------|
 | 200 | Answer evaluated successfully |
-| 400 |  Invalid request |
-| 404 | Interview session not found  |
+| 400 | Invalid request |
+| 404 | Interview session not found |
+| 409 | Interview session exists but is not currently "In Progress" |
 | 500 | Internal server error |
 
 

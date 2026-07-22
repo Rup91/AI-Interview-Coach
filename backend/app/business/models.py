@@ -8,7 +8,7 @@ API layer, per CLAUDE.md's "keep components loosely coupled" guideline.
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Optional
+from typing import List, Optional
 
 
 class SessionStatus(str, Enum):
@@ -70,4 +70,49 @@ class InterviewSession:
     status: SessionStatus = SessionStatus.CONFIGURED
     questions_asked: int = 0
     current_question: Optional[str] = None
+    evaluation_history: List["EvaluationResult"] = field(default_factory=list)
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+@dataclass
+class EvaluationResult:
+    """The dummy evaluation of a single submitted answer.
+
+    Produced by app.business.evaluation_service.EvaluationService - a
+    placeholder for what a real AI Gateway-backed evaluator will return.
+    """
+
+    question: str
+    answer: str
+    score: int
+    strengths: List[str]
+    improvement_areas: List[str]
+    feedback: str
+    ideal_answer: str
+
+
+@dataclass
+class InterviewResult:
+    """The final, aggregated result of a completed interview."""
+
+    overall_score: int
+    strengths: List[str]
+    improvement_areas: List[str]
+    recommendation: str
+    summary: str
+
+
+@dataclass
+class SubmitAnswerOutcome:
+    """Everything the API layer needs to build a Submit Answer response.
+
+    Exactly one of `next_question`/`interview_result` is set, mirroring
+    the API response's "exactly one of nextQuestion/interviewResult" rule.
+    """
+
+    evaluation: EvaluationResult
+    transcription: Optional[str]
+    completed: bool
+    question_number: Optional[int]
+    next_question: Optional[str]
+    interview_result: Optional[InterviewResult]

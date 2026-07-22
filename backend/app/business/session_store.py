@@ -9,8 +9,13 @@ the Business Layer or API Layer that depend on it.
 import threading
 from typing import Optional
 
-from app.business.exceptions import InterviewAlreadyStartedError, InterviewNotFoundError
-from app.business.models import InterviewSession, SessionStatus
+from app.business.exceptions import (
+    InterviewAlreadyStartedError,
+    InterviewNotFoundError,
+    InterviewNotInProgressError,
+    StaleAnswerSubmissionError,
+)
+from app.business.models import EvaluationResult, InterviewSession, SessionStatus
 
 
 class InMemorySessionStore:
@@ -57,4 +62,38 @@ class InMemorySessionStore:
             if session.status != expected_status:
                 raise InterviewAlreadyStartedError(interview_id, session.status)
             session.status = new_status
+            return session
+
+    def record_evaluated_answer(
+        self,
+        interview_id: str,
+        *,
+        expected_question: str,
+        evaluation: EvaluationResult,
+        is_complete: bool,
+        next_question: Optional[str],
+    ) -> InterviewSession:
+        """Atomically commit one evaluated answer to a session.
+
+        Verifies the session is still 'In Progress' and still expecting an
+        answer to `expected_question` before committing - this closes the
+        same class of race transition_status() guards against, and also
+        rejects a late/duplicate submission that was evaluated against a
+        question the session has since moved past (rather than silently
+        double-counting it). The two failure modes raise different
+        exceptions so the error message stays accurate to what actually
+        happened.
+        """
+        with self._lock:
+            session = self._sessions.get(interview_id)
+            if session is None:
+                raise InterviewNotFoundError(interview_id)
+            if session.status != SessionStatus.IN_PROGRESS:
+                raise InterviewNotInProgressError(interview_id, session.status)
+            if session.current_question != expected_question:
+                raise StaleAnswerSubmissionError(interview_id)
+            session.evaluation_history.append(evaluation)
+            session.questions_asked += 1
+            session.status = SessionStatus.COMPLETED if is_complete else SessionStatus.IN_PROGRESS
+            session.current_question = None if is_complete else next_question
             return session

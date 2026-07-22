@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     min_interview_questions: int = 6
     max_interview_questions: int = 12
 
+    # After exactly min_interview_questions have been evaluated, the
+    # interview ends early if the running average score is below this
+    # threshold; otherwise it continues through max_interview_questions.
+    early_termination_score_threshold: float = 4.0
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
